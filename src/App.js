@@ -1,24 +1,29 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import { Find } from './Components/Find'
+import { getFindRepositoryByUserName } from "./Components/Api";
 
 function App() {
+
+  const [repositories, setRepositories] = useState([]);
+  const [loading, setLoading] = useState(1);
+
+  const handleFind = async (userName) => {
+    console.log("test", userName);
+    const result = await getFindRepositoryByUserName(userName);
+    console.log("Repositories",result);        
+    setRepositories( result );
+    setLoading(0);
+    console.log(repositories)
+    //setLoading(false)
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <p>Está carregando? {loading}</p>
+      <Find handleFind= {handleFind} />
+      {repositories.map(dt => (
+        <p>{dt.name}</p>
+      ))}
     </div>
   );
 }
