@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Find } from './Components/Find'
+import { Container } from './Components/Container'
 import { getFindRepositoryByUserName } from "./Components/Api";
 
 function App() {
@@ -8,9 +9,7 @@ function App() {
   const [loading, setLoading] = useState(1);
 
   const handleFind = async (userName) => {
-    console.log("test", userName);
-    const result = await getFindRepositoryByUserName(userName);
-    console.log("Repositories",result);        
+    const result = await getFindRepositoryByUserName(userName);     
     setRepositories( result );
     setLoading(0);
     console.log(repositories)
@@ -19,11 +18,8 @@ function App() {
 
   return (
     <div className="App">
-      <p>Está carregando? {loading}</p>
       <Find handleFind= {handleFind} />
-      {repositories.map(dt => (
-        <p>{dt.name}</p>
-      ))}
+      <Container repositories={repositories} />
     </div>
   );
 }

@@ -5,39 +5,28 @@ import * as Yup from 'yup';
 class Find extends React.Component {
     
     isAlphaNumeric = (text) => {
-        //ignoro '-' e '_' aqui
-        text = text.replace(/-/g, '');
-        text = text.replace(/_/g, '');
-        return text.match(/^[0-9a-zA-Z]+$/);
+        return text.match(/^[a-z0-9\-]+$/i);
     }
 
     validateUsername = (userName) => {
 
         let error;
 
-        //Deve ser informado
-        if (userName.trim().length === 0) {
-            error = 'Necessário informar o nome de usuário!'
-        }
+        if(userName){
+            //Não pode começar ou terminar com hífen
+            if (userName.startsWith('-') || userName.endsWith('-')) {
+                error = 'O nome de usuário não pode começar ou terminar com hífen!'
+            }
 
-        //Máximo de 39 caracteres
-        if (userName.length > 39) {
-            error = 'O nome de usuário pode conter no máximo 39 caracteres!'
-        }
+            //Somente caracteres alfanuméricos (ignoro '-' e '_' aqui)
+            if (!this.isAlphaNumeric(userName)) {
+                error = 'Somente é possível utilizar caracteres alfanuméricos!'
+            }
 
-        //Não pode começar ou terminar com hífen
-        if (userName.startsWith('-') || userName.endsWith('-')) {
-            error = 'O nome de usuário não pode começar ou terminar com hífen!'
-        }
-
-        //Somente caracteres alfanuméricos (ignoro '-' e '_' aqui)
-        if (!this.isAlphaNumeric(userName)) {
-            error = 'Somente é possível utilizar caracteres alfanuméricos!'
-        }
-
-        //um único hífen    
-        if (userName.includes('--')) {
-            error = 'Somente é possível utilizar um único hífen!'
+            //um único hífen    
+            if (userName.includes('--')) {
+                error = 'Somente é possível utilizar um único hífen!'
+            }
         }
 
         return error;
@@ -54,7 +43,15 @@ class Find extends React.Component {
                       userName: Yup.string()
                         .max(39, 'Must be 15 characters or less')
                         .required('Required')
-                        .matches(/^[a-z0-9\-]+$/i,"Fora do Padrão")
+                        .test("len", "Must be exactly 5 characters", val => {
+                            console.log("val ", val);
+                            const error = this.validateUsername(val)
+                            console.log(error)
+                            if(error){
+                                return false
+                            }
+                            return true;
+                          })
                       })}
                     onSubmit={ values => {
                         let { userName } = values
@@ -63,7 +60,7 @@ class Find extends React.Component {
                     >
                     <Form>
                     <label htmlFor="userName">User Name</label>
-                    <Field name="userName" type="text" />
+                    <Field name="userName" type="text" data-test="entrada" />
                     <ErrorMessage name="userName" />
                     </Form>
                 </Formik>

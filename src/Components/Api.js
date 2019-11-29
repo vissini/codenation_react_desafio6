@@ -5,9 +5,13 @@ const API = axios.create({
 });
 
 const getFindRepositoryByUserName = async ( userName ) => {
-  console.log("entrou", userName);
-  const { data } = await API.get(`/users/${userName}/repos`);
-  return data;
+  try{
+    const { data } = await API.get(`/users/${userName}/repos`);
+    return data;
+  }catch (error){
+    return null;
+
+  }
 };
 
 export { getFindRepositoryByUserName };
